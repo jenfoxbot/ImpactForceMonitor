@@ -1,20 +1,20 @@
 #############################################
 #
-#Helmet Guardian: Impact Force Monitor
+#   Helmet Guardian: Impact Force Monitor
 #
 #############################################
 # Code by jenfoxbot <jenfoxbot@gmail.com>
 # Code is open-source, coffee/beerware
 # Please keep header :)
 # If you like the content, consider
-#    buying me a coffee/beer or
-#    contributing to my patreon (jenfoxbot)
+#    buying me a coffee/beer if ya see me 
+#    or contributing to my patreon (jenfoxbot)
 #    to support projects like this! :D
 #############################################
 #
 # SO MANY THANKS to the wonderful folks who
 #    make & document libraries.
-#    
+#
 
 ####################################
 # Libraries
@@ -43,16 +43,37 @@ maxScale = 24
 LED = 26
 
 #Open file to save all data
-#(creates new file if none and appends to existing file)
+#(creates new file in same folder if none
+#and appends to existing file)
 allData = open("AllSensorData.txt", "a")
 
 #Open file to save alert data
-#(creates new file if none and appends to existing file)
+#(creates new file in same folder if none
+#and appends to existing file)
 alrtData = open("AlertData.txt", "a")
+
 
 ####################################
 # Initializations & Functions
+# (Leave as-is unless you are
+#   comfortable w/ code)
 ####################################
+#LIS331 Constants
+CTRL_REG1 = 0x20
+CTRL_REG4 = 0x23
+OUT_X_L = 0x28
+OUT_X_H = ox29
+OUT_Y_L = 0x2A
+OUT_Y_H = 0x2B
+OUT_Z_L = 0x2C
+OUT_Z_H = 0x2D
+
+POWERMODE_NORMAL = 0x27
+RANGE_6G = 0x00
+RANGE_12G = 0x10
+RANGE_24G = 0x30
+
+
 # Create I2C bus
 bus = smbus.SMBus(1)
 
@@ -65,26 +86,26 @@ GPIO.output(LED, GPIO.LOW)
 def initialize(addr, maxScale):
     scale = int(maxScale)
     #Initialize accelerometer control register 1: Normal Power Mode and 50 Hz sample rate
-    bus.write_byte_data(addr, 0x20, 0x27)
+    bus.write_byte_data(addr, CTRL_REG1, POWERMODE_NORMAL)
     #Initialize acceleromter scale selection (6g, 12 g, or 24g). This example uses 24g
     if maxScale == 6:
-        bus.write_byte_data(addr, 0x23, 0x00)
+        bus.write_byte_data(addr, CTRL_REG4, RANGE_6G)
     elif maxScale == 12:
-        bus.write_byte_data(addr, 0x23, 0x10)
+        bus.write_byte_data(addr, CTRL_REG4, RANGE_12G)
     elif maxScale == 24:
-        bus.write_byte_data(addr, 0x23, 0x30)
+        bus.write_byte_data(addr, CTRL_REG4, RANGE_24G)
     else:
         print "Error in the scale provided -- please enter 6, 12, or 24"
 
 
 #Function to read the data from accelerometer
 def readAxes(addr):
-    data0 = bus.read_byte_data(addr, 0x28)
-    data1 = bus.read_byte_data(addr, 0x29)
-    data2 = bus.read_byte_data(addr, 0x2A)
-    data3 = bus.read_byte_data(addr, 0x2B)
-    data4 = bus.read_byte_data(addr, 0x2C)
-    data5 = bus.read_byte_data(addr, 0x2D)
+    data0 = bus.read_byte_data(addr, OUT_X_L)
+    data1 = bus.read_byte_data(addr, OUT_X_H)
+    data2 = bus.read_byte_data(addr, OUT_Y_L)
+    data3 = bus.read_byte_data(addr, OUT_Y_H)
+    data4 = bus.read_byte_data(addr, OUT_Z_L)
+    data5 = bus.read_byte_data(addr, OUT_Z_H)
     #Combine the two bytes and leftshit by 8
     x = data0 | data1 << 8
     y = data2 | data3 << 8
