@@ -58,11 +58,11 @@ alrtData = open("AlertData.txt", "a")
 # (Leave as-is unless you are
 #   comfortable w/ code)
 ####################################
-#LIS331 Constants
+#LIS331 Constants (see Datasheet)
 CTRL_REG1 = 0x20
 CTRL_REG4 = 0x23
 OUT_X_L = 0x28
-OUT_X_H = ox29
+OUT_X_H = 0x29
 OUT_Y_L = 0x2A
 OUT_Y_H = 0x2B
 OUT_Z_L = 0x2C
