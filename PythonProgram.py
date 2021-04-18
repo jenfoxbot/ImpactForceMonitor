@@ -1,3 +1,5 @@
+#!/usr/bin/python3
+
 #############################################
 #
 #   Helmet Guardian: Impact Force Monitor
@@ -95,7 +97,7 @@ def initialize(addr, maxScale):
     elif maxScale == 24:
         bus.write_byte_data(addr, CTRL_REG4, RANGE_24G)
     else:
-        print "Error in the scale provided -- please enter 6, 12, or 24"
+        print("Error in the scale provided -- please enter 6, 12, or 24")
 
 
 #Function to read the data from accelerometer
@@ -134,9 +136,6 @@ def convertToG(maxScale, xAccl, yAccl, zAccl):
 
 def isDanger(timestamp, x, y, z):
     counter = 0
-    x = long(x)
-    y = long(y)
-    z = long(z)
 
     if abs(x) > 9 or abs(y) > 9 or abs(z) > 9:
             alrtData.write(str(timestamp) + "\t" + "x: " + str(x) + "\t" + "y: " + str(y) + "\t" + "z: " +  str(z) + "\n")         
@@ -178,10 +177,10 @@ def main():
         allData.write("x: " + str(x) + "\t" + "y: " + str(y) + "\t" + "z: " + str(z) + "\n")
 
         #print G values (don't need for full installation)
-        print "Acceleration in X-Axis : %d" %x
-        print "Acceleration in Y-Axis : %d" %y
-        print "Acceleration in Z-Axis : %d" %z
-        print "\n"
+        print("Acceleration in X-Axis : %d" %x)
+        print("Acceleration in Y-Axis : %d" %y)
+        print("Acceleration in Z-Axis : %d" %z)
+        print("\n")
 
         #Short delay to prevent overclocking computer
         time.sleep(0.2)
