@@ -29,7 +29,8 @@ import RPi.GPIO as GPIO
 
 #Other
 import time, os
-
+from signal import signal, SIGINT, SIGTERM
+from sys import exit
 
 ####################################
 #        User Parameters
@@ -151,10 +152,20 @@ def isDanger(timestamp, x, y, z):
                 alrtData.write(str(timestamp) + "\t" + "x: " + str(x) + "\t" + "y: " + str(y) + "\t" + "z: " + str(z) + "\n")
                 GPIO.output(LED, GPIO.HIGH)
 
+# closes files and GPIO
+def cleanup(signal_received, frame):
+        allData.close()
+        alrtData.close()
+        GPIO.cleanup()
+        exit(0)
+
 ####################################
 #       Main Function
 ####################################
 def main():
+    #Run this program unless there is a keyboard interrupt
+    signal(SIGINT, cleanup)
+    signal(SIGTERM, cleanup)
     print ("Starting stream")
     while True:
         #initialize LIS331 accelerometer
@@ -185,20 +196,5 @@ def main():
         #Short delay to prevent overclocking computer
         time.sleep(0.2)
 
-    #Run this program unless there is a keyboard interrupt
-    try:
-        while True:
-            pass
-    except KeyboardInterrupt:
-        myprocess.kill()
-        allData.close()
-        alrtData.close()
-        GPIO.cleanup()
-
-
 if __name__ =="__main__":
     main()
-    allData.close()
-    alrtData.close()
-    GPIO.cleanup()
-
